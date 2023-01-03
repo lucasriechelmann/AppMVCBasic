@@ -125,7 +125,33 @@ namespace AppMVCBasic.UI.Controllers
             
             return RedirectToAction(nameof(Index));
         }
+        //[Route("update-address-supplier/{id:guid}")]
+        public async Task<IActionResult> UpdateAddress(Guid id)
+        {
+            var supplierViewModel = await GetSupplierAddressAsync(id);
 
+            if(supplierViewModel is null)
+                return NotFound();
+
+            return PartialView("_AddressUpdate", new SupplierViewModel { Address = supplierViewModel.Address });
+        }
+
+        //[Route("update-address-supplier/{id:guid}")]
+        //[HttpPost]
+        //public async Task<IActionResult> AtualizarEndereco(SupplierViewModel fornecedorViewModel)
+        //{
+        //    ModelState.Remove("Nome");
+        //    ModelState.Remove("Documento");
+
+        //    if (!ModelState.IsValid) return PartialView("_AddressUpdate", fornecedorViewModel);
+
+        //    await _fornecedorService.AtualizarEndereco(_mapper.Map<Endereco>(fornecedorViewModel.Endereco));
+
+        //    if (!OperacaoValida()) return PartialView("_AtualizarEndereco", fornecedorViewModel);
+
+        //    var url = Url.Action("ObterEndereco", "Fornecedores", new { id = fornecedorViewModel.Endereco.FornecedorId });
+        //    return Json(new { success = true, url });
+        //}
         async Task<SupplierViewModel> GetSupplierAddressAsync(Guid id)
         {
             return _mapper.Map<SupplierViewModel>(await _supplierRepository.GetSupplierAddressAsync(id));

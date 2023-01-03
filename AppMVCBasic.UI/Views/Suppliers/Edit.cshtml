@@ -35,13 +35,31 @@
     </div>
 </form>
 
-<div>
+<div id="AddressTarget">
     <partial name="_AddressDetails" />
+</div>
+
+<div>
+    
     <hr />
     <h3>Products</h3>
     <partial name="../Products/_Products" model="@Model.Products"/>
 </div>
 
+<div id="myModal" class="modal fade in">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div id="myModalContent"></div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+        <script>
+            $(document).ready(function () {
+                SetModal();
+            });
+        </script>
 }

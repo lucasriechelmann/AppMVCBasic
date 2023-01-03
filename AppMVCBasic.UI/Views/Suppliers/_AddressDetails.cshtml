@@ -1,7 +1,7 @@
 ﻿@model AppMVCBasic.UI.Models.SupplierViewModel
 
 <hr />
-<h3>Address</h3>
+<h3>Address 2</h3>
 <table class="table table-hover">
     <thead class="bg-dark text-light">
         <tr>
@@ -53,9 +53,11 @@
                 @Html.DisplayFor(model => model.Address.State)
             </td>
             <td>
-                <button type="button" class="btn btn-info"><i class="fa fa-pencil"></i></button>
+                <a asp-controller="Suppliers" asp-action="UpdateAddress" asp-route-id="@Model.Id" class="btn btn-info" data-modal=""><i class="fa fa-pencil"></i></a>
             </td>
         </tr>
     </tbody>
 </table>
+
+
 

@@ -1,0 +1,12 @@
+﻿@model IEnumerable<AppMVCBasic.UI.Models.ProductViewModel>
+
+@{
+    ViewData["Title"] = "List of Products";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">New Product</a>
+</p>
+<partial name="_Products" />

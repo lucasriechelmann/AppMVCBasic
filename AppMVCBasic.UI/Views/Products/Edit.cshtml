@@ -1,0 +1,57 @@
+﻿@model AppMVCBasic.UI.Models.ProductViewModel
+
+@{
+    ViewData["Title"] = "Edit Product - " + Model.Name;
+}
+
+<h1>@ViewData["Title"]</h1>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form enctype="multipart/form-data" asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="mb-3">
+                <label asp-for="SupplierId" class="form-label"></label>
+                <label><b>@Model.Supplier.Name</b></label>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Description" class="form-label"></label>
+                <textarea rows="5" asp-for="Description" class="form-control" ></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="mb-3">                
+                <label>Actual Image</label>
+                <img src="~/images/@Model.Image" alt="@Model.Image" style="width:70px;height:100px;"/>
+            </div>
+            <div class="form-group">
+                <label asp-for="ImageUpload" class="control-label"></label>
+                <input class="form-control" type="file" id="ImagemUpload" asp-for="ImageUpload">
+                <span asp-validation-for="ImageUpload" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Value" class="form-label"></label>
+                <input asp-for="Value" class="form-control" />
+                <span asp-validation-for="Value" class="text-danger"></span>
+            </div>
+            <div class="mb-3 form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="Active" /> @Html.DisplayNameFor(model => model.Active)
+                </label>
+            </div>
+            <div class="mb-3">
+                <input type="submit" value="Save" class="btn btn-primary" />
+                <a href="javascript:window.history.back();" class="btn btn-light">Back</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

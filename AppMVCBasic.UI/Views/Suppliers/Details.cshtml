@@ -1,0 +1,35 @@
+﻿@model AppMVCBasic.UI.Models.SupplierViewModel
+
+@{
+    ViewData["Title"] = "Details Supplier";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div>
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Document)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Document)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Active)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Active)
+        </dd>        
+    </dl>
+    <partial name="_AddressDetails" />
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary">Edit</a>
+    <a href="javascript:window.history.back()" class="btn btn-light">Back</a>
+</div>

@@ -16,11 +16,13 @@ namespace AppMVCBasic.UI.Controllers
     public class SuppliersController : BaseController
     {
         readonly ISupplierRepository _supplierRepository;
+        readonly IAddressRepository _addressRepository;
         readonly IMapper _mapper;
 
-        public SuppliersController(ISupplierRepository supplierRepository, IMapper mapper)
+        public SuppliersController(ISupplierRepository supplierRepository, IAddressRepository addressRepository, IMapper mapper)
         {
             _supplierRepository = supplierRepository;
+            _addressRepository = addressRepository;
             _mapper = mapper;
         }
 
@@ -125,6 +127,15 @@ namespace AppMVCBasic.UI.Controllers
             
             return RedirectToAction(nameof(Index));
         }
+        public async Task<IActionResult> GetAddress(Guid id)
+        {
+            var supplier = await GetSupplierAddressAsync(id);
+
+            if(supplier is null)
+                return NotFound();
+
+            return PartialView("_AddressDetails", supplier);
+        }
         //[Route("update-address-supplier/{id:guid}")]
         public async Task<IActionResult> UpdateAddress(Guid id)
         {
@@ -135,23 +146,19 @@ namespace AppMVCBasic.UI.Controllers
 
             return PartialView("_AddressUpdate", new SupplierViewModel { Address = supplierViewModel.Address });
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateAddress(SupplierViewModel supplier)
+        {
+            ModelState.Remove("Name");
+            ModelState.Remove("Document");
 
-        //[Route("update-address-supplier/{id:guid}")]
-        //[HttpPost]
-        //public async Task<IActionResult> AtualizarEndereco(SupplierViewModel fornecedorViewModel)
-        //{
-        //    ModelState.Remove("Nome");
-        //    ModelState.Remove("Documento");
+            if(!ModelState.IsValid) return PartialView("_AddressUpdate", new SupplierViewModel { Address = supplier.Address });
 
-        //    if (!ModelState.IsValid) return PartialView("_AddressUpdate", fornecedorViewModel);
-
-        //    await _fornecedorService.AtualizarEndereco(_mapper.Map<Endereco>(fornecedorViewModel.Endereco));
-
-        //    if (!OperacaoValida()) return PartialView("_AtualizarEndereco", fornecedorViewModel);
-
-        //    var url = Url.Action("ObterEndereco", "Fornecedores", new { id = fornecedorViewModel.Endereco.FornecedorId });
-        //    return Json(new { success = true, url });
-        //}
+            await _addressRepository.UpdateAsync(_mapper.Map<Address>(supplier.Address));
+            var url = Url.Action("GetAddress", "Suppliers", new { id = supplier.Address.SupplierId });
+            return Json(new { success = true, url });
+        }
         async Task<SupplierViewModel> GetSupplierAddressAsync(Guid id)
         {
             return _mapper.Map<SupplierViewModel>(await _supplierRepository.GetSupplierAddressAsync(id));

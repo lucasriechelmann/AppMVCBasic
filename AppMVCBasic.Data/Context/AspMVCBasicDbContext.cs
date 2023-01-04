@@ -5,7 +5,7 @@ namespace AppMVCBasic.Data.Context
 {
     public class AspMVCBasicDbContext : DbContext
     {
-        public AspMVCBasicDbContext(DbContextOptions options) : base (options){}
+        public AspMVCBasicDbContext(DbContextOptions<AspMVCBasicDbContext> options) : base (options){}
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             foreach (var property in modelBuilder.Model.GetEntityTypes().SelectMany(e => e.GetProperties().Where(p => p.ClrType == typeof(string))))

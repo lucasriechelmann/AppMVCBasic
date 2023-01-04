@@ -6,8 +6,8 @@
 
 <h1>@ViewData["Title"]</h1>
 
-<form asp-action="Edit" class="row">
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<form asp-action="Edit" class="row">    
+    <vc:summary></vc:summary>
     <input type="hidden" asp-for="Id" />
     <div class="col-lg-6 mb-3">
         <label asp-for="Name" class="control-label"></label>

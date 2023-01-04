@@ -10,22 +10,30 @@ namespace AppMVCBasic.UI.Controllers
     {
         readonly IProductRepository _productRepository;
         readonly ISupplierRepository _supplierRepository;
+        readonly IProductService _productService;
         readonly IMapper _mapper;
 
-        public ProductsController(IProductRepository productRepository, ISupplierRepository supplierRepository, IMapper mapper)
+        public ProductsController(IProductRepository productRepository, 
+            ISupplierRepository supplierRepository,
+            IProductService productService, 
+            IMapper mapper,
+            INotifier notifier) : base(notifier)
         {
             _productRepository = productRepository;
             _supplierRepository = supplierRepository;
+            _productService = productService;
             _mapper = mapper;
         }
 
         // GET: Products
+        [Route("list-of-products")]
         public async Task<IActionResult> Index()
         {            
             return View(_mapper.Map<IEnumerable<ProductViewModel>>(await _productRepository.GetProductsSuppliersAsync()));
         }
 
         // GET: Products/Details/5
+        [Route("data-of-product/{id:guid}")]
         public async Task<IActionResult> Details(Guid id)
         {
             var productViewModel = await GetProductAsync(id);
@@ -36,7 +44,7 @@ namespace AppMVCBasic.UI.Controllers
 
             return View(productViewModel);
         }
-
+        [Route("new-product")]
         // GET: Products/Create
         public async Task<IActionResult> Create()
         {
@@ -49,6 +57,7 @@ namespace AppMVCBasic.UI.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Route("new-product")]
         public async Task<IActionResult> Create(ProductViewModel productViewModel)
         {
             if (!ModelState.IsValid)
@@ -67,12 +76,19 @@ namespace AppMVCBasic.UI.Controllers
 
             productViewModel.Image = $"{imgPrefix}{productViewModel.ImageUpload.FileName}";
 
-            await _productRepository.AddAsync(_mapper.Map<Product>(productViewModel));
+            await _productService.AddAsync(_mapper.Map<Product>(productViewModel));
+
+            if (!IsRequestValid())
+            {
+                productViewModel = await SetSuppliersAsync(productViewModel);
+                return View(productViewModel);
+            }
 
             return RedirectToAction(nameof(Index));
         }
 
         // GET: Products/Edit/5
+        [Route("edit-product/{id:guid}")]
         public async Task<IActionResult> Edit(Guid id)
         {
             var productViewModel = await GetProductAsync(id);
@@ -90,6 +106,7 @@ namespace AppMVCBasic.UI.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Route("edit-product/{id:guid}")]
         public async Task<IActionResult> Edit(Guid id, ProductViewModel productViewModel)
         {
             if (id != productViewModel.Id)
@@ -120,12 +137,19 @@ namespace AppMVCBasic.UI.Controllers
             product.Value= productViewModel.Value;
             product.Active= productViewModel.Active;
 
-            await _productRepository.UpdateAsync(_mapper.Map<Product>(product));
+            await _productService.UpdateAsync(_mapper.Map<Product>(product));
+
+            if (!IsRequestValid())
+            {
+                productViewModel = await SetSuppliersAsync(productViewModel);
+                return View(productViewModel);
+            }
 
             return RedirectToAction(nameof(Index));
         }
 
         // GET: Products/Delete/5
+        [Route("delete-product/{id:guid}")]
         public async Task<IActionResult> Delete(Guid id)
         {
             var productViewModel = await GetProductAsync(id);
@@ -140,6 +164,7 @@ namespace AppMVCBasic.UI.Controllers
         // POST: Products/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Route("delete-product/{id:guid}")]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
             var productViewModel = await GetProductAsync(id);
@@ -149,7 +174,12 @@ namespace AppMVCBasic.UI.Controllers
                 return NotFound();
             }
 
-            await _productRepository.DeleteAsync(id);
+            await _productService.DeleteAsync(id);
+
+            if (!IsRequestValid())
+                return View(productViewModel);
+
+            TempData["Success"] = "The product has been deleted.";
 
             return RedirectToAction(nameof(Index));
         }

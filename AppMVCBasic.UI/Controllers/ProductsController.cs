@@ -1,11 +1,14 @@
 ﻿using AppMVCBasic.Business.Interfaces;
 using AppMVCBasic.Business.Models;
+using AppMVCBasic.UI.Extensions;
 using AppMVCBasic.UI.Models;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AppMVCBasic.UI.Controllers
 {
+    [Authorize]
     public class ProductsController : BaseController
     {
         readonly IProductRepository _productRepository;
@@ -27,6 +30,7 @@ namespace AppMVCBasic.UI.Controllers
 
         // GET: Products
         [Route("list-of-products")]
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {            
             return View(_mapper.Map<IEnumerable<ProductViewModel>>(await _productRepository.GetProductsSuppliersAsync()));
@@ -34,6 +38,7 @@ namespace AppMVCBasic.UI.Controllers
 
         // GET: Products/Details/5
         [Route("data-of-product/{id:guid}")]
+        [AllowAnonymous]
         public async Task<IActionResult> Details(Guid id)
         {
             var productViewModel = await GetProductAsync(id);
@@ -46,6 +51,7 @@ namespace AppMVCBasic.UI.Controllers
         }
         [Route("new-product")]
         // GET: Products/Create
+        [ClaimsAuthorize("Product", "Add")]
         public async Task<IActionResult> Create()
         {
             var productViewModel = await SetSuppliersAsync(new ProductViewModel());
@@ -58,6 +64,7 @@ namespace AppMVCBasic.UI.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Route("new-product")]
+        [ClaimsAuthorize("Product", "Add")]
         public async Task<IActionResult> Create(ProductViewModel productViewModel)
         {
             if (!ModelState.IsValid)
@@ -89,6 +96,7 @@ namespace AppMVCBasic.UI.Controllers
 
         // GET: Products/Edit/5
         [Route("edit-product/{id:guid}")]
+        [ClaimsAuthorize("Product", "Edit")]
         public async Task<IActionResult> Edit(Guid id)
         {
             var productViewModel = await GetProductAsync(id);
@@ -107,6 +115,7 @@ namespace AppMVCBasic.UI.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Route("edit-product/{id:guid}")]
+        [ClaimsAuthorize("Product", "Edit")]
         public async Task<IActionResult> Edit(Guid id, ProductViewModel productViewModel)
         {
             if (id != productViewModel.Id)
@@ -150,6 +159,7 @@ namespace AppMVCBasic.UI.Controllers
 
         // GET: Products/Delete/5
         [Route("delete-product/{id:guid}")]
+        [ClaimsAuthorize("Product", "Delete")]
         public async Task<IActionResult> Delete(Guid id)
         {
             var productViewModel = await GetProductAsync(id);
@@ -165,6 +175,7 @@ namespace AppMVCBasic.UI.Controllers
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         [Route("delete-product/{id:guid}")]
+        [ClaimsAuthorize("Product", "Delete")]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
             var productViewModel = await GetProductAsync(id);

@@ -10,9 +10,12 @@ using AppMVCBasic.UI.Models;
 using AppMVCBasic.Business.Interfaces;
 using AutoMapper;
 using AppMVCBasic.Business.Models;
+using Microsoft.AspNetCore.Authorization;
+using AppMVCBasic.UI.Extensions;
 
 namespace AppMVCBasic.UI.Controllers
 {
+    [Authorize]
     public class SuppliersController : BaseController
     {
         readonly ISupplierRepository _supplierRepository;
@@ -31,6 +34,7 @@ namespace AppMVCBasic.UI.Controllers
 
         // GET: Suppliers
         [Route("list-of-suppliers")]
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
               return View(_mapper.Map<IEnumerable<SupplierViewModel>>(await _supplierRepository.GetAsync()));
@@ -38,6 +42,7 @@ namespace AppMVCBasic.UI.Controllers
 
         // GET: Suppliers/Details/5
         [Route("data-of-supplier/{id:guid}")]
+        [AllowAnonymous]
         public async Task<IActionResult> Details(Guid id)
         {
             var supplierViewModel = await GetSupplierAddressAsync(id);
@@ -52,6 +57,7 @@ namespace AppMVCBasic.UI.Controllers
 
         // GET: Suppliers/Create
         [Route("new-supplier")]
+        [ClaimsAuthorize("Supplier", "Add")]
         public IActionResult Create()
         {
             return View();
@@ -63,6 +69,7 @@ namespace AppMVCBasic.UI.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Route("new-supplier")]
+        [ClaimsAuthorize("Supplier", "Add")]
         public async Task<IActionResult> Create(SupplierViewModel supplierViewModel)
         {
             if (!ModelState.IsValid)
@@ -79,6 +86,7 @@ namespace AppMVCBasic.UI.Controllers
 
         // GET: Suppliers/Edit/5
         [Route("edit-supplier/{id:guid}")]
+        [ClaimsAuthorize("Supplier", "Edit")]
         public async Task<IActionResult> Edit(Guid id)
         {
             
@@ -96,6 +104,7 @@ namespace AppMVCBasic.UI.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Route("edit-supplier/{id:guid}")]
+        [ClaimsAuthorize("Supplier", "Edit")]
         public async Task<IActionResult> Edit(Guid id, SupplierViewModel supplierViewModel)
         {
             if (id != supplierViewModel.Id)
@@ -117,6 +126,7 @@ namespace AppMVCBasic.UI.Controllers
 
         // GET: Suppliers/Delete/5
         [Route("delete-supplier/{id:guid}")]
+        [ClaimsAuthorize("Supplier", "Delete")]
         public async Task<IActionResult> Delete(Guid id)
         {
             var supplierViewModel = await GetSupplierAddressAsync(id);
@@ -133,6 +143,7 @@ namespace AppMVCBasic.UI.Controllers
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         [Route("delete-supplier/{id:guid}")]
+        [ClaimsAuthorize("Supplier", "Delete")]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
             var supplierViewModel = await GetSupplierAddressAsync(id);
@@ -148,6 +159,7 @@ namespace AppMVCBasic.UI.Controllers
             return RedirectToAction(nameof(Index));
         }
         [Route("get-supplier-address/{id:guid}")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetAddress(Guid id)
         {
             var supplier = await GetSupplierAddressAsync(id);
@@ -159,6 +171,7 @@ namespace AppMVCBasic.UI.Controllers
         }
         //[Route("update-address-supplier/{id:guid}")]
         [Route("update-supplier-address/{id:guid}")]
+        [ClaimsAuthorize("Supplier", "Edit")]
         public async Task<IActionResult> UpdateAddress(Guid id)
         {
             var supplierViewModel = await GetSupplierAddressAsync(id);
@@ -171,6 +184,7 @@ namespace AppMVCBasic.UI.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Route("update-supplier-address/{id:guid}")]
+        [ClaimsAuthorize("Supplier", "Edit")]
         public async Task<IActionResult> UpdateAddress(SupplierViewModel supplier)
         {
             ModelState.Remove("Name");

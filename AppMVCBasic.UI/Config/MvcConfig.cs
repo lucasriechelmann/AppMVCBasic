@@ -1,11 +1,16 @@
-﻿namespace AppMVCBasic.UI.Config
+﻿using Microsoft.AspNetCore.Mvc;
+
+namespace AppMVCBasic.UI.Config
 {
     public static class MvcConfig
     {
         public static IServiceCollection AddMvcConfiguration(this IServiceCollection services)
         {
             services
-                .AddControllersWithViews()
+                .AddControllersWithViews(o =>
+                {
+                    o.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
+                })
                 .AddRazorRuntimeCompilation();
             return services;
         }

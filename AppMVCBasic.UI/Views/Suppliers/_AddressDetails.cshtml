@@ -26,7 +26,7 @@
             <th>
                 @Html.DisplayNameFor(model => model.Address.State)
             </th>
-            <th></th>
+            <th supress-by-action="Edit,GetAddress"></th>
         </tr>
     </thead>
     <tbody>
@@ -52,7 +52,7 @@
             <td>
                 @Html.DisplayFor(model => model.Address.State)
             </td>
-            <td>
+            <td supress-by-action="Edit,GetAddress">
                 <a asp-controller="Suppliers" asp-action="UpdateAddress" asp-route-id="@Model.Id" class="btn btn-info" data-modal=""><i class="fa fa-pencil"></i></a>
             </td>
         </tr>

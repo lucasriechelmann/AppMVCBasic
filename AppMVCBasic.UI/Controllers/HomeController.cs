@@ -23,10 +23,28 @@ namespace AppMVCBasic.UI.Controllers
             return View();
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        [Route("error/{id:length(3,3)}")]
+        public IActionResult Error(int id)
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            var errorModel = new ErrorViewModel() { ErrorCode = id };
+
+            switch (id)
+            {
+                case 403:
+                    errorModel.Message = "You do not have permission for it.";
+                    errorModel.Title = "Access Denied.";
+                    break;
+                case 404:
+                    errorModel.Message = "The page you are looking for does not exist.<br />If you have doubts contact our support.";
+                    errorModel.Title = "Page not found.";
+                    break;
+                default:
+                    errorModel.Message = "There was an error! Try again later or contact our support.";
+                    errorModel.Title = "There was an error!";
+                    break;
+            }
+
+            return View("Error", errorModel);
         }
     }
 }
